@@ -1,0 +1,23 @@
+# Entorno virtual
+venv/
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de base de datos
+*.sqlite3
+
+# Archivos de entorno
+.env
+
+# Archivos de logs
+*.log
+
+# Archivos de migraciones innecesarios
+*/migrations/__pycache__/
+
+# Configuración de IDEs
+.vscode/
+.idea/
