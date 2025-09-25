@@ -6,7 +6,9 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 from django.utils import timezone
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.conf import settings
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, first_name=None, last_name=None, **extra_fields):
@@ -57,5 +59,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} <{self.email}>"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    avatar = models.URLField(blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Perfil de {self.user.first_name} {self.user.last_name} <{self.user.email}>"
+    
+@receiver(post_save, sender=CustomUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.get_or_create(user=instance)
 
 # Create your models here.

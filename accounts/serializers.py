@@ -4,7 +4,7 @@ que vienen del frontend se convierten en objetos válidos para Django.
 """
 
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, UserProfile
 
 # Serializador para la información del usuario
 class UserSerializer(serializers.ModelSerializer):
@@ -18,6 +18,18 @@ class UserSerializer(serializers.ModelSerializer):
             'description',
             'is_active',
             'is_staff',
+        ]
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    avatar = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'user',
+            'avatar',
+            'bio',
         ]
 
 # Serializador para el registro de nuevos usuarios
