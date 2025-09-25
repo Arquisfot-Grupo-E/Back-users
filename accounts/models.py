@@ -67,10 +67,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"Perfil de {self.user.first_name} {self.user.last_name} <{self.user.email}>"
-    
-@receiver(post_save, sender=CustomUser)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.get_or_create(user=instance)
-
-# Create your models here.
