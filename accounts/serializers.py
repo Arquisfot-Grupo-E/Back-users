@@ -21,6 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 class UserProfileSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance", None)
+        super().__init__(*args, **kwargs)
+        if instance is not None and not isinstance(instance, UserProfile):
+            raise TypeError("UserProfileSerializer requires a UserProfile instance")
+    
     user = UserSerializer(read_only=True)
     avatar = serializers.URLField(required=False, allow_blank=True, allow_null=True)
 
