@@ -56,7 +56,21 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:5173",  # Vite dev server
     "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
 ]
+
+# Email backend configuration for password reset
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development, prints emails to console
+
+# For production, use SMTP backend and configure below:
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'smtp.office365.com'
+#EMAIL_PORT = 587
+#EMAIL_HOST_USER = 'bookworm.help@outlook.com'      
+#EMAIL_HOST_PASSWORD = 'bookworm123'           
+#EMAIL_USE_TLS = True
+#DEFAULT_FROM_EMAIL = 'bookworm.help@outlook.com'
 
 CORS_ALLOW_CREDENTIALS = True
 
