@@ -3,7 +3,15 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from accounts.serializers import UserProfileSerializer
+from accounts.serializers import (
+    UserProfileSerializer,
+    PasswordResetRequestSerializer,
+    PasswordResetConfirmSerializer,
+)
+from django.utils.encoding import force_bytes, smart_str
+from django.utils.http import urlsafe_base64_encode
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
 
 from accounts.models import UserProfile
 
@@ -169,3 +177,43 @@ class UserProfileSerializerTests(TestCase):
     def test_serializer_requires_profile_instance_not_user(self):
         with self.assertRaises(TypeError):
             UserProfileSerializer(instance=self.user)  # instancia equivocada
+
+class PasswordResetSerializersTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(
+            email="pwd@example.com", password="OldPass123!",
+            first_name="Pwd", last_name="User"
+        )
+
+    def test_request_serializer_accepts_existing_email(self):
+        s = PasswordResetRequestSerializer(data={"email": "pwd@example.com"})
+        self.assertTrue(s.is_valid(), s.errors)
+
+    def test_request_serializer_rejects_unknown_email(self):
+        s = PasswordResetRequestSerializer(data={"email": "nope@example.com"})
+        self.assertFalse(s.is_valid())
+        self.assertIn("email", s.errors)
+
+    def test_confirm_serializer_valid_token_changes_password(self):
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        token = PasswordResetTokenGenerator().make_token(self.user)
+
+        s = PasswordResetConfirmSerializer(data={
+            "uidb64": uidb64,
+            "token": token,
+            "new_password": "NewPass123!",
+        })
+        self.assertTrue(s.is_valid(), s.errors)
+        user = s.save()
+        self.assertTrue(user.check_password("NewPass123!"))
+
+    def test_confirm_serializer_invalid_token(self):
+        uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+        s = PasswordResetConfirmSerializer(data={
+            "uidb64": uidb64,
+            "token": "invalid-token",
+            "new_password": "NewPass123!",
+        })
+        self.assertFalse(s.is_valid())
+        self.assertIn("token", s.errors)

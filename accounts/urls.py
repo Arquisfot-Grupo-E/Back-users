@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from .views import RegisterView, UserListView, get_user_profile, update_user_profile
+from .views import RegisterView, UserListView, get_user_profile, update_user_profile, password_reset_request, password_reset_confirm
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'), # registro
@@ -16,4 +16,6 @@ urlpatterns = [
     path('profile/update/', update_user_profile, name='user-profile-update'), # actualizar perfil del usuario actual
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # login
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),      # refrescar token
+    path('password-reset/', password_reset_request, name='password_reset'),
+    path('password-reset-confirm/', password_reset_confirm, name='password_reset_confirm'),
 ]
