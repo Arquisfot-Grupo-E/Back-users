@@ -7,7 +7,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import CustomUser
-from .serializers import RegisterSerializer, UserSerializer
+from .serializers import RegisterSerializer, UserSerializer, UserProfileSerializer
 
 from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 from django.contrib.auth import get_user_model
@@ -36,8 +36,22 @@ def get_user_profile(request):
     """
     Obtiene el perfil del usuario autenticado actual
     """
-    serializer = UserSerializer(request.user)
+    serializer = UserProfileSerializer(request.user.profile)
     return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([permissions.IsAuthenticated])
+def update_user_profile(request):
+    """
+    Actualiza el perfil del usuario autenticado actual
+    """
+    profile = request.user.profile
+    serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Create your views here.
 

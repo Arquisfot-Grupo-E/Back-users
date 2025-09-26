@@ -4,7 +4,7 @@ que vienen del frontend se convierten en objetos válidos para Django.
 """
 
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, UserProfile
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str, smart_bytes, smart_str, DjangoUnicodeDecodeError
@@ -25,6 +25,24 @@ class UserSerializer(serializers.ModelSerializer):
             'is_staff',
         ]
 
+class UserProfileSerializer(serializers.ModelSerializer):
+
+    def __init__(self, *args, **kwargs):
+        instance = kwargs.get("instance", None)
+        super().__init__(*args, **kwargs)
+        if instance is not None and not isinstance(instance, UserProfile):
+            raise TypeError("UserProfileSerializer requires a UserProfile instance")
+    
+    user = UserSerializer(read_only=True)
+    avatar = serializers.URLField(required=False, allow_blank=True, allow_null=True)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'user',
+            'avatar',
+            'bio',
+        ]
 # Serializer for requesting password reset
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
