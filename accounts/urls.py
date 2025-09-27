@@ -4,9 +4,9 @@ Define las rutas URL para las vistas de la aplicación de cuentas.
 
 from django.urls import path
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
 )
+from .auth_views import MyTokenObtainPairView
 from .views import RegisterView, UserListView, get_user_profile, update_user_profile, password_reset_request, password_reset_confirm, confirm_preferences
 
 urlpatterns = [
@@ -14,7 +14,7 @@ urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'), # solo admin/listar usuarios
     path('profile/', get_user_profile, name='user-profile'), # perfil del usuario actual
     path('profile/update/', update_user_profile, name='user-profile-update'), # actualizar perfil del usuario actual
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # login
+    path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),  # login (custom serializer adds first_name)
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),      # refrescar token
     path('password-reset/', password_reset_request, name='password_reset'),
     path('password-reset-confirm/', password_reset_confirm, name='password_reset_confirm'),
