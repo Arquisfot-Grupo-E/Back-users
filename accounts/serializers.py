@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'description',
             'is_active',
+            'has_selected_preferences',
             'is_staff',
         ]
 
