@@ -40,6 +40,9 @@ def get_user_profile(request):
     return Response(serializer.data)
 
 
+
+
+
 @api_view(['PUT'])
 @permission_classes([permissions.IsAuthenticated])
 def update_user_profile(request):
@@ -86,3 +89,29 @@ def password_reset_confirm(request):
         serializer.save()
         return Response({"detail": "Password has been reset successfully."}, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Confirmar que el usuario ya eligió sus gustos
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def confirm_preferences(request):
+    """
+    Marca que el usuario ya eligió sus gustos.
+    Este endpoint debe ser llamado por el frontend después de
+    enviar los gustos al servicio de Recomendaciones.
+    """
+    user = request.user
+
+    if getattr(user, 'has_selected_preferences', False):
+        return Response(
+            {"detail": "Ya seleccionaste tus gustos."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user.has_selected_preferences = True
+    user.save()
+
+    return Response(
+        {"detail": "Preferencias confirmadas correctamente."},
+        status=status.HTTP_200_OK
+    )
