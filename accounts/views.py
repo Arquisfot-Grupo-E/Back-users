@@ -91,6 +91,31 @@ def password_reset_confirm(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def update_preferred_genres(request):
+    """
+    Actualiza la lista de géneros preferidos del usuario (max 3 strings).
+    Body esperado: { "preferred_genres": ["Genero1", "Genero2", "Genero3"] }
+    """
+    user = request.user
+    data = request.data
+    genres = data.get('preferred_genres', None)
+    if genres is None:
+        return Response({'preferred_genres': 'Este campo es requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Usar las mismas validaciones que en el serializer
+    ser = UserSerializer(instance=user, data={'preferred_genres': genres}, partial=True)
+    if not ser.is_valid():
+        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # Guardar campo en el usuario
+    user.preferred_genres = ser.validated_data.get('preferred_genres', [])
+    user.save()
+
+    return Response({'detail': 'Géneros preferidos actualizados.', 'preferred_genres': user.preferred_genres}, status=status.HTTP_200_OK)
+
+
 # Confirmar que el usuario ya eligió sus gustos
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

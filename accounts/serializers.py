@@ -23,8 +23,20 @@ class UserSerializer(serializers.ModelSerializer):
             'description',
             'is_active',
             'has_selected_preferences',
+            'preferred_genres',
             'is_staff',
         ]
+
+    def validate_preferred_genres(self, value):
+        # Permitir lista vacía o hasta 3 géneros (strings)
+        if not isinstance(value, list):
+            raise serializers.ValidationError('preferred_genres debe ser una lista')
+        if len(value) > 3:
+            raise serializers.ValidationError('Solo se permiten hasta 3 géneros')
+        for item in value:
+            if not isinstance(item, str):
+                raise serializers.ValidationError('Cada género debe ser una cadena de texto')
+        return value
 
 class UserProfileSerializer(serializers.ModelSerializer):
 

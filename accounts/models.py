@@ -51,6 +51,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)
+    # Preferencias de géneros (lista de hasta 3 géneros que el usuario elija)
+    preferred_genres = models.JSONField(default=list, blank=True)
     has_selected_preferences = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
