@@ -49,13 +49,36 @@ class UserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     avatar = serializers.URLField(required=False, allow_blank=True, allow_null=True)
 
+    first_name = serializers.CharField(write_only=True, required=False)
+    last_name  = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = UserProfile
         fields = [
             'user',
             'avatar',
             'bio',
+            "first_name",
+            "last_name",
         ]
+
+    def update(self, instance, validated_data):
+        first_name = validated_data.pop("first_name", None)
+        last_name  = validated_data.pop("last_name", None)
+
+        if first_name is not None:
+            instance.user.first_name = first_name
+        if last_name is not None:
+            instance.user.last_name = last_name
+        if first_name is not None or last_name is not None:
+            to_update = []
+            if first_name is not None: to_update.append("first_name")
+            if last_name  is not None: to_update.append("last_name")
+            instance.user.save(update_fields=to_update)
+
+        # continúa con la actualización del perfil (avatar/bio)
+        return super().update(instance, validated_data)
+    
 # Serializer for requesting password reset
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()
