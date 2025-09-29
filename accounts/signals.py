@@ -6,4 +6,11 @@ from .models import UserProfile
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.get_or_create(user=instance)
+        profile, _ = UserProfile.objects.get_or_create(
+            user=instance,
+            defaults={"bio": instance.description}  # se copia description
+        )
+        # Limpiar el campo description en el usuario
+        if instance.description:
+            instance.description = ""
+            instance.save(update_fields=["description"])

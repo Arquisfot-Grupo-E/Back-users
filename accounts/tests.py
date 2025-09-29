@@ -217,3 +217,40 @@ class PasswordResetSerializersTests(TestCase):
         })
         self.assertFalse(s.is_valid())
         self.assertIn("token", s.errors)
+
+class UserProfileSignalTests(TestCase):
+    def test_bio_copies_from_description_and_clears_description(self):
+        # Al crear el usuario con description...
+        u = User.objects.create_user(
+            email="copy@test.com",
+            password="123456",
+            first_name="Copy",
+            last_name="User",
+            description="Mi descripción inicial"
+        )
+        # La signal debe crear el perfil y copiar la description a bio
+        profile = UserProfile.objects.get(user=u)
+        self.assertEqual(profile.bio, "Mi descripción inicial")
+
+        # Y debe limpiar description en el usuario
+        u.refresh_from_db()
+        self.assertEqual(u.description, "")
+
+    def test_bio_not_overwritten_on_subsequent_user_saves(self):
+        u = User.objects.create_user(
+            email="keep@test.com",
+            password="123456",
+            first_name="Keep",
+            last_name="User",
+            description="Bio original"
+        )
+        profile = UserProfile.objects.get(user=u)
+        self.assertEqual(profile.bio, "Bio original")
+
+        # Cambiamos la description del usuario y guardamos
+        u.description = "No debería copiarse"
+        u.save()
+
+        # La signal solo actúa en created=True; no debe modificar el bio existente
+        profile.refresh_from_db()
+        self.assertEqual(profile.bio, "Bio original")
