@@ -7,7 +7,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from .models import CustomUser
-from .serializers import RegisterSerializer, UserSerializer, UserProfileSerializer
+from .serializers import RegisterSerializer, UserPublicProfileSerializer, UserSerializer, UserProfileSerializer
 
 from .serializers import PasswordResetRequestSerializer, PasswordResetConfirmSerializer
 from django.contrib.auth import get_user_model
@@ -140,3 +140,20 @@ def confirm_preferences(request):
         {"detail": "Preferencias confirmadas correctamente."},
         status=status.HTTP_200_OK
     )
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_public_user_profile(request, user_id):
+    """
+    Obtiene el perfil público de un usuario específico por su ID
+    """
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response(
+            {"detail": "Usuario no encontrado"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    
+    serializer = UserPublicProfileSerializer(user)
+    return Response(serializer.data)

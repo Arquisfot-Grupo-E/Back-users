@@ -141,3 +141,21 @@ class RegisterSerializer(serializers.ModelSerializer):
             description=validated_data.get('description', '')  
         )
         return user
+
+
+class UserPublicProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer para mostrar información pública de un usuario
+    (sin email ni datos sensibles)
+    """
+    profile = UserProfileSerializer(read_only=True)
+    
+    class Meta:
+        model = CustomUser
+        fields = [
+            'id',
+            'first_name',
+            'last_name',
+            'date_joined',
+            'profile',  # incluye avatar y bio
+        ]

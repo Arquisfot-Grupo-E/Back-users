@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .auth_views import MyTokenObtainPairView
-from .views import RegisterView, UserListView, get_user_profile, update_user_profile, password_reset_request, password_reset_confirm, confirm_preferences, update_preferred_genres
+from .views import RegisterView, UserListView, get_public_user_profile, get_user_profile, update_user_profile, password_reset_request, password_reset_confirm, confirm_preferences, update_preferred_genres
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'), # registro
@@ -20,4 +20,5 @@ urlpatterns = [
     path('password-reset-confirm/', password_reset_confirm, name='password_reset_confirm'),
     path('confirm-preferences/', confirm_preferences, name='confirm_preferences'),
     path('profile/genres/', update_preferred_genres, name='update_preferred_genres'),
+    path('users/<int:user_id>/profile/', get_public_user_profile, name='public-user-profile')  # perfil público de usuario, va a ser usado en el servicio de reviews
 ]
