@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  users_service:
+    build: .
+    container_name: django_users_service
+    command: python manage.py runserver 0.0.0.0:8001
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001" # Exponer el puerto para que el gateway pueda accederlo
