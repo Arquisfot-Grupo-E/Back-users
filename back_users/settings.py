@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-b@y!skwfv@&_t=@29&l8p64!6pfz4!*zn)q(n^sed@91s=)&80
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*'
+]
 
 
 # Application definition
@@ -57,7 +59,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
     "http://127.0.0.1:5173",
     "http://localhost:5174",
-    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5174"
 ]
 
 # Email backend configuration for password reset
