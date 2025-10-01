@@ -26,9 +26,15 @@ SECRET_KEY = 'django-insecure-b@y!skwfv@&_t=@29&l8p64!6pfz4!*zn)q(n^sed@91s=)&80
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*'
+    'localhost',
+    '127.0.0.1',
+    'django_users_service',
+    '0.0.0.0',
+    '*',
 ]
 
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = None
 
 # Application definition
 
@@ -59,7 +65,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
     "http://127.0.0.1:5173",
     "http://localhost:5174",
-    "http://127.0.0.1:5174"
+    "http://127.0.0.1:5174",
+    "http://localhost:4000",      # Gateway GraphQL
+    "http://127.0.0.1:4000",
+    "http://graphql_gateway:4000", # Contenedor del gateway
 ]
 
 # Email backend configuration for password reset
@@ -76,6 +85,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For developm
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ALLOW_ALL_ORIGINS = True 
+
 # JWT Configuration
 from datetime import timedelta
 
@@ -91,7 +102,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

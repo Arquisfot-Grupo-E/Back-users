@@ -124,12 +124,15 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = [
+            'id',
             'email',
             'first_name',
             'last_name',
             'description',
             'password',
         ]
+        
+        read_only_fields = ['id']
 
     # Crear un nuevo usuario con los datos validados
     def create(self, validated_data):
