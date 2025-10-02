@@ -130,7 +130,7 @@ def confirm_preferences(request):
     if getattr(user, 'has_selected_preferences', False):
         return Response(
             {"detail": "Ya seleccionaste tus gustos."},
-            status=status.HTTP_400_BAD_REQUEST
+            status=status.HTTP_200_OK
         )
 
     user.has_selected_preferences = True
