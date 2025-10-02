@@ -114,7 +114,6 @@ Back-users/
 │   ├── settings.py       # Configuraciones
 │   ├── urls.py           # URLs principales
 │   └── wsgi.py           # Configuración WSGI
-├── db.sqlite3            # Base de datos SQLite
 ├── manage.py             # Script de gestión de Django
 ├── requirements.txt      # Dependencias del proyecto
 └── README.md            # Este archivo
