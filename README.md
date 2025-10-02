@@ -27,39 +27,8 @@ git clone <url-del-repositorio>
 cd Back-users
 ```
 
-### 2. Crea un entorno virtual (recomendado)
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
-
-# Linux/macOS
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instala las dependencias
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Configura la base de datos
-```bash
-python manage.py migrate
-```
-
-### 5. (Opcional) Crea un superusuario
-```bash
-python manage.py createsuperuser
-```
-
-## 🏃‍♂️ Ejecución
-
-Para ejecutar el servidor de desarrollo:
-
-```bash
-python manage.py runserver 8001
-```
+### 2. Docker
+docker-compose up --build
 
 El servidor estará disponible en: `http://localhost:8001`
 
