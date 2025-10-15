@@ -2,8 +2,8 @@
 FROM python:3.12-slim
 
 # Establecer variables de entorno para Python
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Establecer el directorio de trabajo
 WORKDIR /app
