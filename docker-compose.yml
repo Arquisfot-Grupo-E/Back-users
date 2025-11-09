@@ -1,4 +1,22 @@
 services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database (Local)
+  # ---------------------------------------------------------------------------
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: users_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-users_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - data_network
+  
+  # ---------------------------------------------------------------------------
+  # Users Service (Django)
+  # ---------------------------------------------------------------------------
   users_service:
     build: .
     container_name: django_users_service
@@ -6,13 +24,43 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8001:8001" # Exponer el puerto para que el gateway pueda accederlo
+      - "8001:8001" # Exponer para desarrollo individual
     environment:
       - PYTHONUNBUFFERED=1
+      # PostgreSQL Local
+      - DB_ENGINE=${DB_ENGINE:-django.db.backends.postgresql}
+      - DB_NAME=${POSTGRES_DB:-users_db}
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DB_HOST=postgres-db
+      - DB_PORT=5432
     networks:
-      - bookworm_network
+      - backend_network
+      - data_network  # Acceso a PostgreSQL local
+    depends_on:
+      - postgres-db
 
+# =============================================================================
+# REDES SEGMENTADAS
+# =============================================================================
+# Back-users:
+#   - backend_network: Recibe peticiones del gateway
+#   - data_network: Acceso a PostgreSQL local
+#
+# PREREQUISITO: 
+#   Ejecutar bash scripts/setup-networks.sh (en Middleware-Graphql)
+# =============================================================================
 networks:
-  bookworm_network:
+  backend_network:
     external: true
-    name: bookworm_network
+    name: backend_network
+  data_network:
+    external: true
+    name: data_network
+
+# =============================================================================
+# VOLÚMENES PERSISTENTES
+# =============================================================================
+volumes:
+  postgres_data:
+    name: users_postgres_data

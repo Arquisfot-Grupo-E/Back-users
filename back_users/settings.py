@@ -134,14 +134,16 @@ WSGI_APPLICATION = 'back_users.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+import os
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'exlzccQbgIUSppVmsefLOizUKWUnqDjx',
-        'HOST': 'shinkansen.proxy.rlwy.net',
-        'PORT': '25561',
+        'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': os.environ.get('DB_NAME', 'users_db'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'HOST': os.environ.get('DB_HOST', 'postgres-db'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 
